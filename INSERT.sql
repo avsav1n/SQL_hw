@@ -49,6 +49,25 @@ VALUES (10, 'A Murder of Crows', 184),
 	   (2, 'Scream', 193),
 	   (1, 'Siren Charms', 185),
 	   (1, 'My Generation', 193);
+	  
+INSERT INTO tracks(album_id, track_name, track_duration)
+VALUES  (8, 'my own', 210),
+		(8, 'own my', 211),
+		(8, 'my', 204),
+		(9, 'oh my god', 235),
+		(9, 'myself', 150),
+		(9, 'by myself', 210),
+		(9, 'bemy self', 253),
+		(9, 'myself by', 251),
+		(9, 'by myself by', 210),
+		(2, 'beemy', 230),
+		(2, 'premyne', 196);
+	
+INSERT INTO tracks(album_id, track_name, track_duration)
+VALUES  (2, 'кто-то там мой', 212),
+		(2, 'Мойдодыр', 221),
+		(3, 'Мой до дыр', 231);
+		
 
 --Добавление сборников в таблицу digests
 INSERT INTO digests(digest_name, digest_year)
@@ -99,4 +118,3 @@ VALUES (2, 1),
 	   (13, 3),
 	   (9, 4),
 	   (16, 4);
-

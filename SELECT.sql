@@ -8,9 +8,10 @@ FROM tracks
 WHERE track_duration = (SELECT max(track_duration) FROM tracks);
 
 --Название треков, продолжительность которых не менее 3,5 минут
+--Исправлено: исправлен оператор сравнения
 SELECT track_name
 FROM tracks
-WHERE track_duration > 210;
+WHERE track_duration >= 210;
 
 --Названия сборников, вышедших в период с 2018 по 2020 год включительно
 SELECT digest_name 
@@ -23,9 +24,21 @@ FROM artists
 WHERE artist_name NOT LIKE '% %';
 
 --Название треков, которые содержат слово «мой» или «my»
-SELECT track_name 
-FROM tracks
-WHERE track_name LIKE '%My%';
+--Исправлено: исправлен основной запрос, добавлены варианты с использованием функции и регулярного выражения
+SELECT track_name
+FROM tracks t 
+WHERE track_name ILIKE 'my' OR 
+	  track_name ILIKE '% my' OR 
+	  track_name ILIKE 'my %' OR 
+	  track_name ILIKE '% my %';
+	 
+SELECT track_name
+FROM tracks t 
+WHERE string_to_array(lower(track_name), ' ') && ARRAY['my','мой'];
+
+SELECT track_name
+FROM tracks t 
+WHERE track_name ~* '(\mmy\M|\mмой\M)';
 
 /*
 Задание №3
@@ -51,12 +64,16 @@ LEFT JOIN tracks t ON a.album_id = t.album_id
 GROUP BY album_name;
 
 --Все исполнители, которые не выпустили альбомы в 2020 году
+--Исправлено: заменено на вариант с использованием вложенного запроса
 SELECT artist_name
-FROM albums_artists aa
-JOIN artists ar ON ar.artist_id = aa.artist_id 
-JOIN albums al ON aa.album_id = al.album_id
-WHERE album_year < 2017
-GROUP BY artist_name;
+FROM artists a 
+WHERE artist_name NOT IN (
+						  SELECT artist_name 
+						  FROM albums_artists aa 
+						  JOIN artists a2 ON aa.artist_id = a2.artist_id
+						  JOIN albums a3 ON aa.album_id = a3.album_id
+						  WHERE album_year = 2020
+						 );
 
 --Названия сборников, в которых присутствует конкретный исполнитель (выберите его сами)
 SELECT digest_name
@@ -88,14 +105,12 @@ WHERE ar.artist_name IN (
 						)
 GROUP BY al.album_name;
 
-
 --Наименования треков, которые не входят в сборники
 SELECT track_name 
 FROM tracks_digests td 
 FULL JOIN tracks t ON t.track_id = td.track_id 
 FULL JOIN digests d ON td.digest_id = d.digest_id 
 WHERE digest_name IS NULL;
-
 
 --Исполнитель или исполнители, написавшие самый короткий по продолжительности трек, — теоретически таких треков может быть несколько
 SELECT ar.artist_name
